@@ -17,7 +17,7 @@ class JsaLoader {
 		try {
 
 			String resp = (Jsoup.connect(url).execute().body());
-			musicList.addAll(JsaParser.toMusic(new JSONObject(resp.strip())));
+			musicList.addAll(JsaParser.toMusic(new JSONObject(resp.trim())));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -32,14 +32,14 @@ class JsaLoader {
 		try {
 
 			String resp = (Jsoup.connect(url).execute().body());
-			List<Album> parsedList = JsaParser.toAlbum(new JSONObject(resp.strip()));
+			List<Album> parsedList = JsaParser.toAlbum(new JSONObject(resp.trim()));
 
 			for (Album album : parsedList) {
 				if (album.song_pids.equals(""))
 					continue;
 
 				String nres = Jsoup.connect(JsaApiBuilder.getSongsAlbum(album.song_pids)).execute().body();
-				album.songs.addAll(JsaParser.toAlbumMusic(new JSONObject(nres.strip()), album.song_pids.split(",")));
+				album.songs.addAll(JsaParser.toAlbumMusic(new JSONObject(nres.trim()), album.song_pids.split(",")));
 				albumList.add(album);
 			}
 
