@@ -12,4 +12,7 @@ class JsaConstants {
 
 	// songs in album, requires comma separated ids (string)
 	public static final String API_SONGS_FROM_ALBUM = "https://www.jiosaavn.com/api.php?__call=song.getDetails&cc=in&_marker=0%3F_marker%3D0&_format=json&pids=";
+
+	// user agent for jsoup connect
+	public static final String USER_AGENT = "Mozilla/5.0";
 }

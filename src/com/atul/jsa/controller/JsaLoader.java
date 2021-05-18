@@ -16,7 +16,7 @@ class JsaLoader {
 		List<Music> musicList = new ArrayList<>();
 		try {
 
-			String resp = (Jsoup.connect(url).execute().body());
+			String resp = (Jsoup.connect(url).userAgent(JsaConstants.USER_AGENT).execute().body());
 			musicList.addAll(JsaParser.toMusic(new JSONObject(resp.trim())));
 
 		} catch (Exception e) {
@@ -31,14 +31,14 @@ class JsaLoader {
 		List<Album> albumList = new ArrayList<>();
 		try {
 
-			String resp = (Jsoup.connect(url).execute().body());
+			String resp = (Jsoup.connect(url).userAgent(JsaConstants.USER_AGENT).execute().body());
 			List<Album> parsedList = JsaParser.toAlbum(new JSONObject(resp.trim()));
 
 			for (Album album : parsedList) {
 				if (album.song_pids.equals(""))
 					continue;
 
-				String nres = Jsoup.connect(JsaApiBuilder.getSongsAlbum(album.song_pids)).execute().body();
+				String nres = Jsoup.connect(JsaApiBuilder.getSongsAlbum(album.song_pids)).userAgent(JsaConstants.USER_AGENT).execute().body();
 				album.songs.addAll(JsaParser.toAlbumMusic(new JSONObject(nres.trim()), album.song_pids.split(",")));
 				albumList.add(album);
 			}
