@@ -17,7 +17,11 @@ class JsaLoader {
 		try {
 
 			String resp = (Jsoup.connect(url).userAgent(JsaConstants.USER_AGENT).execute().body());
-			musicList.addAll(JsaParser.toMusic(new JSONObject(resp.trim())));
+			String pid = String.join(",", JsaParser.getMusicIds(new JSONObject(resp.trim())));
+
+			String nres = Jsoup.connect(JsaApiBuilder.getSongsAlbum(pid)).userAgent(JsaConstants.USER_AGENT).execute()
+					.body();
+			musicList.addAll(JsaParser.toMusic(new JSONObject(nres.trim()), pid.split(",")));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -38,8 +42,9 @@ class JsaLoader {
 				if (album.song_pids.equals(""))
 					continue;
 
-				String nres = Jsoup.connect(JsaApiBuilder.getSongsAlbum(album.song_pids)).userAgent(JsaConstants.USER_AGENT).execute().body();
-				album.songs.addAll(JsaParser.toAlbumMusic(new JSONObject(nres.trim()), album.song_pids.split(",")));
+				String nres = Jsoup.connect(JsaApiBuilder.getSongsAlbum(album.song_pids))
+						.userAgent(JsaConstants.USER_AGENT).execute().body();
+				album.songs.addAll(JsaParser.toMusic(new JSONObject(nres.trim()), album.song_pids.split(",")));
 				albumList.add(album);
 			}
 

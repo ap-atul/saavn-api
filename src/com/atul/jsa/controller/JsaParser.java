@@ -11,53 +11,24 @@ import com.atul.jsa.model.Music;
 
 class JsaParser {
 
-	public static List<Music> toMusic(JSONObject json) {
-		List<Music> musicList = new ArrayList<>();
-
+	public static List<String> getMusicIds(JSONObject json) {
+		List<String> ids = new ArrayList<>();
+		
 		if (!json.has("songs") && !json.has("data"))
-			return musicList;
+			return ids;
+		
 
 		JSONObject songs = json.getJSONObject("songs");
 		JSONArray data = songs.getJSONArray("data");
-
+		
 		for (int i = 0; i < data.length(); i++) {
 			JSONObject obj = data.getJSONObject(i);
-			Music m = getMusic(obj);
-
-			if (m != null)
-				musicList.add(m);
+			
+			if (obj.has("id"))
+				ids.add(obj.getString("id"));
 		}
-
-		return musicList;
-	}
-
-	private static Music getMusic(JSONObject obj) {
-		String id = null, album = null, title = null, albumArt = null, url = null, artist = null;
-
-		if (obj.has("id"))
-			id = obj.getString("id");
-
-		if (obj.has("album"))
-			album = obj.getString("album");
-
-		if (obj.has("description"))
-			title = obj.getString("description");
-
-		if (obj.has("image"))
-			albumArt = obj.getString("image");
-
-		if (obj.has("more_info")) {
-			JSONObject sub = obj.getJSONObject("more_info");
-
-			if (sub.has("primary_artists"))
-				artist = sub.getString("primary_artists");
-
-			if (sub.has("vlink"))
-				url = sub.getString("vlink");
-
-		}
-
-		return new Music(id, album, albumArt, title, url, artist);
+		
+		return ids;
 	}
 
 	public static List<Album> toAlbum(JSONObject json) {
@@ -103,7 +74,7 @@ class JsaParser {
 		return new Album(name, artist, song_pids, songCount, songs);
 	}
 
-	public static List<Music> toAlbumMusic(JSONObject json, String[] pids) {
+	public static List<Music> toMusic(JSONObject json, String[] pids) {
 		List<Music> music = new ArrayList<>();
 
 		for (String pid : pids) {
@@ -121,13 +92,13 @@ class JsaParser {
 					title = obj.getString("song");
 
 				if (obj.has("image"))
-					albumArt = obj.getString("image");
+					albumArt = obj.getString("image").replace("150x150", "500x500");
 
 				if (obj.has("primary_artists"))
 					artist = obj.getString("primary_artists");
 
-				if (obj.has("vlink"))
-					url = obj.getString("vlink");
+				if (obj.has("media_preview_url"))
+					url = obj.getString("media_preview_url").replace("96_p.mp4", "320.mp4");
 
 				music.add(new Music(id, album, albumArt, title, url, artist));
 			}
